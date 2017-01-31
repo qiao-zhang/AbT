@@ -33,7 +33,6 @@ func delay(_ seconds: Double, completion: @escaping ()->Void) {
 class ViewController: UIViewController {
 
   // MARK: IB outlets
-
   @IBOutlet var loginButton: UIButton!
   @IBOutlet var heading: UILabel!
   @IBOutlet var username: UITextField!
@@ -45,16 +44,15 @@ class ViewController: UIViewController {
   @IBOutlet var cloud4: UIImageView!
 
   // MARK: further UI
-
   let spinner = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
   let status = UIImageView(image: UIImage(named: "banner"))
   let label = UILabel()
-  let messages = ["Connecting ...", "Authorizing ...", "Sending credentials ...", "Failed"]
+  let messages =
+      ["Connecting ...", "Authorizing ...", "Sending credentials ...", "Failed"]
 
   var statusPosition = CGPoint.zero
 
   // MARK: view controller methods
-
   override func viewDidLoad() {
     super.viewDidLoad()
 
@@ -71,29 +69,56 @@ class ViewController: UIViewController {
     status.center = loginButton.center
     view.addSubview(status)
 
-    label.frame = CGRect(x: 0.0, y: 0.0, width: status.frame.size.width, height: status.frame.size.height)
+    label.frame = CGRect(x: 0.0, y: 0.0,
+                         width: status.frame.size.width,
+                         height: status.frame.size.height)
     label.font = UIFont(name: "HelveticaNeue", size: 18.0)
     label.textColor = UIColor(red: 0.89, green: 0.38, blue: 0.0, alpha: 1.0)
     label.textAlignment = .center
     status.addSubview(label)
+    
+    heading.center.x -= view.bounds.width
+    username.center.x -= view.bounds.width
+    password.center.x -= view.bounds.width
+    
   }
 
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
+    [cloud1, cloud2, cloud3, cloud4].forEach {
+      $0.alpha = 0.0
+    }
   }
 
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
+    
+    UIView.animate(withDuration: 0.5) {
+      self.heading.center.x += self.view.bounds.width
+    }
+    UIView.animate(
+        withDuration: 0.5, delay: 0.3, options: [],
+        animations: { self.username.center.x += self.view.bounds.width },
+        completion: nil)
+    UIView.animate(
+        withDuration: 0.5, delay: 0.4,
+        options: [],
+        animations: { self.password.center.x += self.view.bounds.width },
+        completion: nil)
+    var delay = 0.5
+    [cloud1, cloud2, cloud3, cloud4].forEach { cloud in
+      UIView.animate(withDuration: 0.5, delay: delay, options: [],
+          animations: { cloud!.alpha = 1.0 })
+      delay += 0.2
+    }
   }
 
   // MARK: further methods
-
   @IBAction func login() {
     view.endEditing(true)
   }
 
   // MARK: UITextFieldDelegate
-
   func textFieldShouldReturn(_ textField: UITextField) -> Bool {
     let nextField = (textField === username) ? password : username
     nextField?.becomeFirstResponder()
